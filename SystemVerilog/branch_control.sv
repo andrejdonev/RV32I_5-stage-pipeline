@@ -1,0 +1,36 @@
+import risc_pkg::*;
+
+module branch_control (
+    input logic [31:0] opr_a,
+    input logic [31:0] opr_b,
+    input logic        is_b_type,
+    input logic [2:0]  funct3,
+
+    output logic       branch_taken
+);
+
+//Signed versions for comparison
+logic signed [31:0] a_signed, b_signed;
+logic               taken;
+assign a_signed = opr_a;
+assign b_signed = opr_b;
+
+always_comb begin 
+    taken = 1'b0;
+
+    case (funct3)
+        B_BEQ: taken = (opr_a == opr_b);
+        B_BNE: taken = (opr_a != opr_b);
+        B_BLT: taken = (a_signed < b_signed);
+        B_BGE: taken = (a_signed >= b_signed);
+        B_BLTU: taken = (opr_a < opr_b);
+        B_BGEU: taken = (opr_a >= opr_b); 
+    endcase
+
+    
+    
+end
+
+assign branch_taken = is_b_type && taken;
+
+endmodule
